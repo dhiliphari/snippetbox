@@ -1,6 +1,9 @@
 package main
 
-import "net/http"
+import (
+	"log/slog"
+	"net/http"
+)
 
 func commonHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -13,6 +16,21 @@ func commonHeaders(next http.Handler) http.Handler {
 
 		// Application specific headers
 		w.Header().Set("Server", "Go")
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+func (app *application) logRequest(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var (
+			ip     = slog.String("ip", r.RemoteAddr)
+			proto  = slog.String("proto", r.Proto)
+			method = slog.String("method", r.Method)
+			uri    = slog.String("uri", r.URL.RequestURI())
+		)
+
+		app.logger.Info("received request", ip, proto, method, uri)
 
 		next.ServeHTTP(w, r)
 	})
