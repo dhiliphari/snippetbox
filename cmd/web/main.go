@@ -33,9 +33,13 @@ type application struct {
 }
 
 func main() {
+	// Load app configuration
 	cfg := parseCfg()
+
+	// Setup structured logging
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
+	// Connect to database
 	db, err := openDB(cfg.dsn)
 	if err != nil {
 		logger.Error(err.Error())
@@ -43,14 +47,17 @@ func main() {
 	}
 	defer db.Close()
 
+	// Create template cache
 	templateCache, err := newTemplateCache()
 	if err != nil {
 		logger.Error(err.Error())
 		os.Exit(1)
 	}
 
+	// Form decoder
 	formDecoder := form.NewDecoder()
 
+	// Setup session state manager
 	sessionManager := scs.New()
 	sessionManager.Store = mysqlstore.New(db)
 	sessionManager.Lifetime = 12 * time.Hour
@@ -66,7 +73,12 @@ func main() {
 
 	logger.Info("starting server", slog.String("addr", cfg.addr))
 
-	err = http.ListenAndServe(cfg.addr, app.routes())
+	srv := &http.Server{
+		Addr:    cfg.addr,
+		Handler: app.routes(),
+	}
+
+	err = srv.ListenAndServe()
 	logger.Error(err.Error())
 	os.Exit(1)
 }
