@@ -17,5 +17,11 @@ func (app *application) routes() http.Handler {
 	mux.Handle("GET /snippet/create", loadAndSaveSession(app.snippetCreate))
 	mux.Handle("POST /snippet/create", loadAndSaveSession(app.snippetCreatePost))
 
+	mux.Handle("GET /user/signup", loadAndSaveSession(app.userSignup))
+	mux.Handle("POST /user/signup", loadAndSaveSession(app.userSignupPost))
+	mux.Handle("GET /user/login", loadAndSaveSession(app.userLogin))
+	mux.Handle("POST /user/login", loadAndSaveSession(app.userLoginPost))
+	mux.Handle("POST /user/logout", loadAndSaveSession(app.userLogoutPost))
+
 	return app.recoverPanic(app.logRequest(commonHeaders(mux)))
 }
