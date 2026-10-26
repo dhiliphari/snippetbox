@@ -1,26 +1,30 @@
 package validator
 
 import (
+	"regexp"
 	"slices"
 	"strings"
 	"unicode/utf8"
 )
 
+var EmailPattern = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+
 type Validator struct {
-	Errors map[string]string
+	NonFieldErrors map[string]string
+	FieldErrors    map[string]string
 }
 
 func (v *Validator) Valid() bool {
-	return len(v.Errors) == 0
+	return len(v.FieldErrors) == 0
 }
 
 func (v *Validator) AddFieldError(key, message string) {
-	if v.Errors == nil {
-		v.Errors = make(map[string]string)
+	if v.FieldErrors == nil {
+		v.FieldErrors = make(map[string]string)
 	}
 
-	if _, exists := v.Errors[key]; !exists {
-		v.Errors[key] = message
+	if _, exists := v.FieldErrors[key]; !exists {
+		v.FieldErrors[key] = message
 	}
 }
 
@@ -40,4 +44,12 @@ func MaxChars(value string, n int) bool {
 
 func PermittedValue[T comparable](value T, permittedValues ...T) bool {
 	return slices.Contains(permittedValues, value)
+}
+
+func MinChars(value string, n int) bool {
+	return utf8.RuneCountInString(value) >= n
+}
+
+func Matches(value string, rx *regexp.Regexp) bool {
+	return rx.MatchString(value)
 }
