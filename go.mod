@@ -7,6 +7,7 @@ require (
 	github.com/alexedwards/scs/v2 v2.9.0
 	github.com/go-playground/form/v4 v4.5.0
 	github.com/go-sql-driver/mysql v1.10.1
+	github.com/justinas/alice v1.2.0
 	golang.org/x/crypto v0.58.0
 )
 
