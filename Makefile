@@ -2,13 +2,12 @@ APP_NAME := snippetbox
 APP_PATH := ./cmd/web
 DSN ?= web:pass@/snippetbox?parseTime=true
 ADDR ?= :4000
-STATIC_DIR ?= ./ui/static
 
 .PHONY: run build certs
 
 run:
 	@echo "Running $(APP_NAME)..."
-	go run $(APP_PATH) -addr=$(ADDR) -dsn=$(DSN) -static-dir=$(STATIC_DIR)
+	go run $(APP_PATH) -addr=$(ADDR) -dsn=$(DSN)
 
 build:
 	@echo "Building $(APP_NAME)..."
