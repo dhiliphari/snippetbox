@@ -8,7 +8,7 @@ import (
 	"github.com/dhiliphari/snippetbox/internal/validator"
 )
 
-const KEY_AUTHENTICATED_USER_ID = "authenticatedUserId"
+const authenticatedUserIdSessionKey = "authenticatedUserId"
 
 type userSignupForm struct {
 	Name                string `form:"name"`
@@ -116,7 +116,7 @@ func (app *application) userLoginPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.sessionManager.Put(r.Context(), KEY_AUTHENTICATED_USER_ID, id)
+	app.sessionManager.Put(r.Context(), authenticatedUserIdSessionKey, id)
 
 	http.Redirect(w, r, "/snippet/create", http.StatusSeeOther)
 }
@@ -128,7 +128,7 @@ func (app *application) userLogoutPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.sessionManager.Remove(r.Context(), KEY_AUTHENTICATED_USER_ID)
+	app.sessionManager.Remove(r.Context(), authenticatedUserIdSessionKey)
 	app.sessionManager.Put(r.Context(), "flash", "You've been logged out successfully!")
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
