@@ -11,7 +11,7 @@ run:
 
 build:
 	@echo "Building $(APP_NAME)..."
-	go build -o ./bin/$(APP_NAME) $(APP_PATH)
+	go build -o ./bin/$(APP_NAME) $(APP_PATH) && cp -r ./tls ./bin/
 
 certs:
 	@echo "Generating self-signed certificate..."
